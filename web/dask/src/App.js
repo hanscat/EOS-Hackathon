@@ -12,7 +12,11 @@ import {
   Redirect,
   withRouter
 } from "react-router-dom";
+import eosjs from 'eosjs';
 
+const Eos = require('eosjs') // Eos = require('./src')
+const eos = Eos({keyProvider: '5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3'})
+console.log("here", JSON.stringify(eos))
 
 const dask = () => (
   <Router>
@@ -53,8 +57,8 @@ const dask = () => (
           <div class="col-sm-4">
             <h2><Link to="/explore">Explore Page</Link></h2>
           </div>
-            <AuthButton />
         </div>
+        <AuthButton />
         <Route path="/ask" component={Ask} />
         <Route path="/login" component={Login} />
         <PrivateRoute path="/invitation" component={Invitation} />
@@ -81,7 +85,7 @@ const verifyPK = {
 const AuthButton = withRouter(
   ({ history }) =>
     verifyPK.isAuthenticated ? (
-      <h1>
+      <p>
         Welcome! #Add User Name#{" "}
         <button
           onClick={() => {
@@ -90,9 +94,9 @@ const AuthButton = withRouter(
         >
           Sign out
         </button>
-      </h1>
+      </p>
     ) : (
-      <h1>Private Key Not Yet Authenticated</h1>
+      <p>Private Key Not Yet Authenticated</p>
     )
 );
 
@@ -149,7 +153,7 @@ class Login extends React.Component {
           Private Key: <input type="text" name="pk" />
           <input type="submit" value="Verify" />
         </form>
-        // <button onClick={this.login}>Verify</button>
+        <button onClick={this.login}>Verify</button>
       </div>
     );
   }
