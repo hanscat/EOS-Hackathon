@@ -28,3 +28,24 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.header {
+  height: 20vw;
+  min-height: 150px;
+  max-height: 250px;
+  margin-top: 50px;
+  background-color: grey;
+  position: relative;
+}
+.header-img {
+  height: 10vw;
+  min-height: 75px;
+  background-image: url(../logo.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.header-btn {
+  position: absolute;
+  bottom: 0;
+}

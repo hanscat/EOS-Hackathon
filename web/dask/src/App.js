@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
+import { Grid, Navbar, Jumbotron, Button } from 'react-bootstrap';
 import './css/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -12,36 +13,60 @@ import {
   withRouter
 } from "react-router-dom";
 
-////////////////////////////////////////////////////////////
-// 1. Click the ask page
-// 2. Click the answer page
-// 3. Log in
-// 4. Click the back button, note the URL each time
 
-const AuthExample = () => (
+const dask = () => (
   <Router>
-    <div class="container col-sm-6">
-      <AuthButton />
-      <ul>
-        <li>
-          <Link to="/ask">Ask-a-question Page</Link>
-        </li>
-        <li>
-          <Link to="/invitation">Invitation-to-answer Page</Link>
-        </li>
-        <li>
-          <Link to="/explore">Explore Page</Link>
-        </li>
-      </ul>
-      <Route path="/ask" component={Ask} />
-      <Route path="/login" component={Login} />
-      <PrivateRoute path="/invitation" component={Invitation} />
-      <Route path="/explore" component={Explore} />
+    <div>
+      <Navbar inverse fixedTop>
+        <Grid>
+          <Navbar.Header>
+            <Navbar.Brand>
+              <a class="header" href="/">DASK</a>
+            </Navbar.Brand>
+            <Navbar.Toggle />
+          </Navbar.Header>
+        </Grid>
+      </Navbar>
+
+      <div class="header">
+        <div class="container header-img">
+          <p class="header-btn">
+            <Button
+              bsStyle="success"
+              bsSize="large"
+              href="http://react-bootstrap.github.io/components.html"
+              target="_blank">
+              Join Us
+            </Button>
+          </p>
+        </div>
+      </div>
+
+      <div class="container main">
+        <div class="row">
+          <div class="col-sm-4">
+            <h2><Link to="/ask">Ask-a-question Page</Link></h2>
+          </div>
+          <div class="col-sm-4">
+            <h2><Link to="/invitation">Invitation-to-answer Page</Link></h2>
+          </div>
+          <div class="col-sm-4">
+            <h2><Link to="/explore">Explore Page</Link></h2>
+          </div>
+            <AuthButton />
+        </div>
+        <Route path="/ask" component={Ask} />
+        <Route path="/login" component={Login} />
+        <PrivateRoute path="/invitation" component={Invitation} />
+        <Route path="/explore" component={Explore} />
+      </div>
+
     </div>
   </Router>
 );
 
-const fakeAuth = {
+// TO-DO for user's private key verification
+const verifyPK = {
   isAuthenticated: false,
   authenticate(cb) {
     this.isAuthenticated = true;
@@ -55,27 +80,28 @@ const fakeAuth = {
 
 const AuthButton = withRouter(
   ({ history }) =>
-    fakeAuth.isAuthenticated ? (
-      <p>
-        Welcome!{" "}
+    verifyPK.isAuthenticated ? (
+      <h1>
+        Welcome! #Add User Name#{" "}
         <button
           onClick={() => {
-            fakeAuth.signout(() => history.push("/"));
+            verifyPK.signout(() => history.push("/"));
           }}
         >
           Sign out
         </button>
-      </p>
+      </h1>
     ) : (
-      <p>You are not logged in.</p>
+      <h1>Private Key Not Yet Authenticated</h1>
     )
 );
 
+// make use of verifyPK
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
-      fakeAuth.isAuthenticated ? (
+      verifyPK.isAuthenticated ? (
         <Component {...props} />
       ) : (
         <Redirect
@@ -90,8 +116,12 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
 );
 
 const Ask = () => <h3>A form for submitting a question and invite people to answer</h3>;
-const Invitation = () => <h3>A list of questions that invited the user</h3>;
-const Explore = () => <h3>A list of random questions that are open to answering</h3>
+const Invitation = () =>
+  <div>
+    <ul>A list of questions that invited the user</ul>
+    <li>should retrive from eosio, dynamically using a loop</li>
+  </div>;
+const Explore = () => <h3>A list of random questions that are open to answering</h3>;
 
 class Login extends React.Component {
   state = {
@@ -99,7 +129,7 @@ class Login extends React.Component {
   };
 
   login = () => {
-    fakeAuth.authenticate(() => {
+    verifyPK.authenticate(() => {
       this.setState({ redirectToReferrer: true });
     });
   };
@@ -114,11 +144,15 @@ class Login extends React.Component {
 
     return (
       <div>
-        <p>You must log in to view the page at {from.pathname}</p>
-        <button onClick={this.login}>Log in</button>
+        <p>Please verify your private key {from.pathname}</p>
+        <form onsubmit={this.login} method="post">
+          Private Key: <input type="text" name="pk" />
+          <input type="submit" value="Verify" />
+        </form>
+        // <button onClick={this.login}>Verify</button>
       </div>
     );
   }
 }
 
-export default AuthExample;
+export default dask;
